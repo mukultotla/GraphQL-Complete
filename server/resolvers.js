@@ -35,7 +35,7 @@ export const resolvers = {
   },
 
   Mutation: {
-    createJob: (_, { title, description }) => {
+    createJob: (_, { input: { title, description } }) => {
       const companyId = "FjcJCHJALA4i";
       return createJob({ companyId, title, description });
     },
