@@ -42,11 +42,11 @@ export const resolvers = {
   },
 
   Mutation: {
-    createJob: (_, { input: { title, description } }, { auth }) => {
-      if (!auth) {
+    createJob: (_, { input: { title, description } }, { user }) => {
+      if (!user) {
         throw unauthorizedError("Missing authentication");
       }
-      const companyId = "FjcJCHJALA4i";
+      const companyId = user.companyId;
       return createJob({ companyId, title, description });
     },
     deleteJob: (_, { id }) => {
