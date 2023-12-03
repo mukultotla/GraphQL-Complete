@@ -14,14 +14,14 @@ export const resolvers = {
     company: async (_, args) => {
       const company = await getCompany(args.id);
       if (!company) {
-        notFoundError(`No company found with id ${args.id}`);
+        throw notFoundError(`No company found with id ${args.id}`);
       }
       return company;
     },
     job: async (_, args) => {
       const job = await getJob(args.id);
       if (!job) {
-        notFoundError(`No job found with id ${args.id}`);
+        throw notFoundError(`No job found with id ${args.id}`);
       }
       return job;
     },
@@ -42,7 +42,10 @@ export const resolvers = {
   },
 
   Mutation: {
-    createJob: (_, { input: { title, description } }) => {
+    createJob: (_, { input: { title, description } }, { auth }) => {
+      if (!auth) {
+        throw unauthorizedError("Missing authentication");
+      }
       const companyId = "FjcJCHJALA4i";
       return createJob({ companyId, title, description });
     },
@@ -58,5 +61,11 @@ export const resolvers = {
 function notFoundError(message) {
   throw new GraphQLError(message, {
     extensions: { code: "NOT_FOUND" },
+  });
+}
+
+function unauthorizedError(message) {
+  throw new GraphQLError(message, {
+    extensions: { code: "UNAUTHORIZED" },
   });
 }

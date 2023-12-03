@@ -13,12 +13,15 @@ app.use(cors(), express.json(), authMiddleware);
 app.post("/login", handleLogin);
 
 const typeDefs = await readFile("./schema.graphql", "utf-8");
+
+function getContext({ req }) {
+  return { auth: req.auth };
+}
 const server = new ApolloServer({ typeDefs, resolvers });
 await server.start();
-
-app.use("/graphql", expressMiddleware(server));
+app.use("/graphql", expressMiddleware(server, { context: getContext }));
 
 app.listen({ port: PORT }, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`GraphQL Endpoint: http://localhost:${PORT}/graphql`)
+  console.log(`GraphQL Endpoint: http://localhost:${PORT}/graphql`);
 });
