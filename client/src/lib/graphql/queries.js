@@ -36,6 +36,14 @@ const authLink = new ApolloLink((operation, forward) => {
 const apolloClient = new ApolloClient({
   link: concat(authLink, httpLink),
   cache: new InMemoryCache(),
+  // defaultOptions: {
+  //   query: {
+  //     fetchPolicy: "network-only",
+  //   },
+  //   watchQuery: {
+  //     fetchPolicy: "network-only",
+  //   },
+  // },
 });
 
 export async function getCompany(companyId) {
@@ -94,7 +102,10 @@ export async function getJobs() {
       }
     }
   `;
-  const { data } = await apolloClient.query({ query });
+  const { data } = await apolloClient.query({
+    query,
+    fetchPolicy: "network-only",
+  });
   return data.jobs;
 }
 
